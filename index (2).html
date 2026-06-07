@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Орден-П3 — Планшет</title>
+    <style>
+        :root {
+            --tablet-color: #444A1F;
+            --accent: #59612D;
+            --accent-dark: #3f4520;
+            --bg: #0a0a0a;
+            --surface: #1a1a1a;
+            --text: #ccc;
+            --font-mono: 'Courier New', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            user-select: none;
+        }
+
+        .tablet {
+            width: 920px;
+            height: 640px;
+            background: linear-gradient(145deg, #555e35 0%, #3b4120 100%);
+            border-radius: 40px;
+            padding: 18px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8), inset 0 1px 3px rgba(255,255,255,0.3), inset 0 -2px 5px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border: 1px solid #6a7340;
+        }
+
+        .tablet::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 40px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100" height="100" filter="url(#noise)" opacity="0.08"/></svg>');
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .tablet-screen {
+            flex: 1;
+            background: #111;
+            border-radius: 28px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.9);
+            border: 1px solid #2a2a2a;
+            z-index: 1;
+        }
+
+        .screen-header {
+            background: #0d0d0d;
+            padding: 10px 20px;
+            text-align: center;
+            border-bottom: 1px solid #2a2a2a;
+            color: #ddd;
+            font-size: 16px;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            z-index: 2;
+        }
+        .header-center {
+            font-weight: bold;
+        }
+
+        .status-icons {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .signal-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 14px;
+        }
+        .signal-bar {
+            width: 4px;
+            border-radius: 1px;
+            background: #888;
+        }
+        .signal-bar.active {
+            background: #0f0;
+        }
+        .battery {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        .battery-body {
+            width: 22px;
+            height: 10px;
+            border: 1px solid #888;
+            border-radius: 3px;
+            padding: 1px;
+            display: flex;
+            align-items: center;
+        }
+        .battery-level {
+            height: 6px;
+            width: 30%;
+            background: #f55;
+            border-radius: 2px;
+        }
+        .battery-cap {
+            width: 3px;
+            height: 6px;
+            background: #888;
+            border-radius: 0 2px 2px 0;
+        }
+
+        .desktop {
+            flex: 1;
+            background: #0d0d0d;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            z-index: 1;
+        }
+
+        .dock {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 10px 20px;
+            background: rgba(20,20,20,0.9);
+            border-radius: 20px;
+            margin-bottom: 10px;
+            border: 1px solid #333;
+            flex-wrap: wrap;
+        }
+        .app-icon {
+            width: 70px;
+            height: 70px;
+            background: rgba(40,40,40,0.9);
+            border: 1px solid #555;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .app-icon:hover {
+            background: #333;
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(89,97,45,0.5);
+        }
+        .app-icon .icon-shape {
+            font-size: 30px;
+            color: var(--accent);
+            font-family: var(--font-mono);
+            margin-bottom: 4px;
+        }
+        .app-icon span {
+            color: #ccc;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        .app-fullscreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #1a1a1a;
+            display: none;
+            flex-direction: column;
+            z-index: 10;
+        }
+        .app-fullscreen.active {
+            display: flex;
+        }
+
+        .app-header {
+            background: #252a14;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #4a5425;
+        }
+        .close-app-btn {
+            cursor: pointer;
+            font-size: 24px;
+            color: #c5cfa0;
+            transition: 0.2s;
+        }
+        .close-app-btn:hover {
+            color: #fff;
+        }
+
+        .app-tabs {
+            display: flex;
+            background: #111;
+        }
+        .app-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            cursor: pointer;
+            background: #222;
+            color: #aaa;
+            font-weight: bold;
+            letter-spacing: 1px;
+            border-bottom: 2px solid transparent;
+            transition: 0.2s;
+        }
+        .app-tab.active {
+            background: #252a14;
+            border-bottom: 2px solid var(--accent);
+            color: #fff;
+        }
+
+        .app-body {
+            flex: 1;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .field label {
+            color: #bbb;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        input, select, textarea {
+            padding: 6px 8px;
+            background: #0a0a0a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #ddd;
+            font-family: var(--font-mono);
+            font-size: 13px;
+        }
+        textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+        .output-field {
+            background: #000;
+            color: #0f0;
+            font-weight: bold;
+        }
+
+        .btn {
+            background: var(--accent-dark);
+            border: 1px solid #6e753b;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: 0.2s;
+            font-size: 13px;
+        }
+        .btn:hover {
+            background: #4a5425;
+            border-color: #8c944a;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .led {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #332200;
+            box-shadow: 0 0 8px #6b4e00;
+            transition: 0.1s;
+        }
+        .led.active {
+            background: #ff9900;
+            box-shadow: 0 0 14px #ff9900;
+        }
+
+        .tablet-buttons {
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0 5px 0;
+            z-index: 3;
+        }
+        .tablet-btn {
+            background: linear-gradient(180deg, #5e6537 0%, #2f3319 100%);
+            border: none;
+            color: #ddd;
+            font-size: 26px;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 6px 8px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.2);
+            transition: 0.08s;
+            text-shadow: 0 1px 2px black;
+        }
+        .tablet-btn:active {
+            transform: scale(0.94);
+            box-shadow: 0 2px 3px rgba(0,0,0,0.6), inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .screen-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            border-radius: 28px;
+            overflow: hidden;
+        }
+        .screen-overlay::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 800"><path d="M120,0 L135,200 L110,230 L140,420 L115,450 L155,800" stroke="rgba(255,255,255,0.04)" stroke-width="1.2" fill="none"/><path d="M320,0 L300,180 L330,210 L290,400 L310,800" stroke="rgba(255,255,255,0.03)" stroke-width="1" fill="none"/><path d="M50,300 L250,310 L260,500" stroke="rgba(255,255,255,0.02)" stroke-width="0.8" fill="none"/><circle cx="140" cy="230" r="4" fill="rgba(255,255,255,0.05)"/><circle cx="290" cy="400" r="3" fill="rgba(255,255,255,0.04)"/></svg>') no-repeat center;
+            background-size: cover;
+            opacity: 0.6;
+        }
+        .screen-overlay::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><filter id="dust"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/></filter><rect width="200" height="200" filter="url(#dust)" opacity="0.12"/></svg>');
+            opacity: 0.5;
+            mix-blend-mode: screen;
+        }
+
+        canvas {
+            border: 1px solid #333;
+            background: #0a0a0a;
+            width: 100%;
+            display: block;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            max-height: 300px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #ccc;
+            font-size: 12px;
+        }
+        th, td {
+            padding: 6px 8px;
+            border: 1px solid #333;
+            text-align: center;
+        }
+        th {
+            background: #252a14;
+        }
+        tr:hover {
+            background: #333;
+            cursor: pointer;
+        }
+        .caliber-header {
+            background: #1a1a1a;
+            font-weight: bold;
+            color: var(--accent);
+            padding: 8px;
+            text-align: left;
+        }
+
+        .scanner-freq {
+            font-family: var(--font-mono);
+            color: #0f0;
+            font-size: 24px;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+        .signal-meter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .meter-bar {
+            width: 100%;
+            height: 10px;
+            background: #333;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .meter-fill {
+            width: 0%;
+            height: 100%;
+            background: #0f0;
+            transition: width 0.05s;
+        }
+
+        .timer-display {
+            font-family: 'Courier New', monospace;
+            font-size: 72px;
+            color: #ff0000;
+            text-shadow: 0 0 30px #ff0000;
+            text-align: center;
+            margin: 20px 0;
+            letter-spacing: 10px;
+        }
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .map-container {
+            flex: 1;
+            position: relative;
+            background: #1a1a1a;
+            overflow: hidden;
+        }
+        .map-toolbar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 8px;
+            background: #222;
+        }
+    </style>
+</head>
+<body>
+<div class="tablet">
+    <div class="tablet-screen">
+        <div class="screen-overlay"></div>
+
+        <div class="screen-header">
+            <div class="status-icons">
+                <div class="signal-bars" title="Сигнал">
+                    <div class="signal-bar active" style="height:6px;"></div>
+                    <div class="signal-bar active" style="height:10px;"></div>
+                    <div class="signal-bar" style="height:14px;"></div>
+                    <div class="signal-bar" style="height:18px;"></div>
+                </div>
+                <div class="battery" title="Батарея 31%">
+                    <div class="battery-body"><div class="battery-level"></div></div>
+                    <div class="battery-cap"></div>
+                </div>
+            </div>
+            <div class="header-center" id="timeDisplay">--:-- --.--.----</div>
+            <div style="width:70px;"></div>
+        </div>
+
+        <div class="desktop" id="desktop">
+            <div class="dock">
+                <div class="app-icon" id="appIconCipher"><div class="icon-shape">⌘</div><span>ШИФР</span></div>
+                <div class="app-icon" id="appIconBallistic"><div class="icon-shape">◉</div><span>МИНОМЁТ</span></div>
+                <div class="app-icon" id="appIconScanner"><div class="icon-shape">⊗</div><span>ЭФИР</span></div>
+                <div class="app-icon" id="appIconTimer"><div class="icon-shape">⏱</div><span>ТАЙМЕР</span></div>
+                <div class="app-icon" id="appIconMap"><div class="icon-shape">◈</div><span>КАРТА</span></div>
+            </div>
+        </div>
+
+        <!-- Шифратор -->
+        <div class="app-fullscreen" id="cipherApp">
+            <div class="app-header"><span>ШИФРАТОР v.1.3b</span><span class="close-app-btn" id="closeCipherApp">✕</span></div>
+            <div class="app-tabs" id="cipherTabs">
+                <div class="app-tab active" data-mode="encrypt">КОДИРОВАНИЕ</div>
+                <div class="app-tab" data-mode="decrypt">ДЕКОДИРОВАНИЕ</div>
+            </div>
+            <div class="app-body" id="cipherBody"></div>
+        </div>
+
+        <!-- Баллистический калькулятор -->
+        <div class="app-fullscreen" id="ballisticApp">
+            <div class="app-header"><span>МИНОМЁТНЫЙ КАЛЬКУЛЯТОР</span><span class="close-app-btn" id="closeBallisticApp">✕</span></div>
+            <div class="app-tabs" id="ballisticTabs">
+                <div class="app-tab active" data-tab="calc">РАСЧЁТ</div>
+                <div class="app-tab" data-tab="ref">СПРАВОЧНИК ЗАРЯДОВ</div>
+            </div>
+            <div class="app-body" id="ballisticBody"></div>
+        </div>
+
+        <!-- Сканер эфира -->
+        <div class="app-fullscreen" id="scannerApp">
+            <div class="app-header"><span>СКАНЕР ЭФИРА v.1.0</span><span class="close-app-btn" id="closeScannerApp">✕</span></div>
+            <div class="app-body" id="scannerBody" style="align-items:center;">
+                <div class="scanner-freq" id="freqDisplay">4625.0 кГц</div>
+                <canvas id="scannerCanvas" style="height:100px;"></canvas>
+                <div class="signal-meter">
+                    <span style="color:#0f0;">S:</span>
+                    <div class="meter-bar"><div class="meter-fill" id="meterFill"></div></div>
+                    <span id="meterValue" style="color:#0f0;">0</span>
+                </div>
+                <button class="btn" id="scanBtn">СКАНИРОВАТЬ</button>
+                <textarea id="interceptOutput" class="output-field" rows="8" placeholder="Перехваченное сообщение..." style="flex:1; min-height:120px;"></textarea>
+                <button class="btn" id="autoScanBtn">АВТОСКАНИРОВАНИЕ</button>
+            </div>
+        </div>
+
+        <!-- Тактический таймер -->
+        <div class="app-fullscreen" id="timerApp">
+            <div class="app-header"><span>ТАКТИЧЕСКИЙ ТАЙМЕР</span><span class="close-app-btn" id="closeTimerApp">✕</span></div>
+            <div class="app-body" id="timerBody" style="align-items:center; justify-content:center;">
+                <div class="timer-display" id="timerDisplay">00:00</div>
+                <div class="timer-controls">
+                    <button class="btn" id="timerAdd5">+5 МИН</button>
+                    <button class="btn" id="timerAdd1">+1 МИН</button>
+                    <button class="btn" id="timerStart">СТАРТ</button>
+                    <button class="btn" id="timerStop">СТОП</button>
+                    <button class="btn" id="timerReset">СБРОС</button>
+                </div>
+                <div style="color:#888; margin-top:10px;">Осталось времени: <span id="timerRemaining" style="color:#f00;">0:00</span></div>
+            </div>
+        </div>
+
+        <!-- Карта сектора -->
+        <div class="app-fullscreen" id="mapApp">
+            <div class="app-header"><span>КАРТА СЕКТОРА</span><span class="close-app-btn" id="closeMapApp">✕</span></div>
+            <div class="map-toolbar">
+                <button class="btn" id="loadMapBtn">ЗАГРУЗИТЬ PNG</button>
+                <select id="markerType" class="btn" style="background:#222;">
+                    <option value="cache">Схрон</option>
+                    <option value="ambush">Засада</option>
+                    <option value="anomaly">Аномалия</option>
+                    <option value="camp">Лагерь</option>
+                </select>
+                <button class="btn" id="toggleMarkerBtn">МАРКЕР</button>
+                <button class="btn" id="clearMarkersBtn">ОЧИСТИТЬ</button>
+                <span style="color:#aaa; margin-left:auto;">ПКМ — удалить маркер</span>
+            </div>
+            <div class="map-container" id="mapContainer">
+                <canvas id="mapCanvas" style="width:100%; height:100%;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="tablet-buttons">
+        <button class="tablet-btn" id="btnHome" title="Домой">⌂</button>
+        <button class="tablet-btn" id="btnBack" title="Назад">←</button>
+    </div>
+</div>
+
+<input type="file" id="mapFileInput" accept="image/png" style="display:none;">
+
+<script>
+(function() {
+    // ---------- Общие утилиты ----------
+    const $ = (s) => document.querySelector(s);
+    const $$ = (s) => document.querySelectorAll(s);
+
+    // Часы
+    function updateTime() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2, '0');
+        const m = String(now.getMinutes()).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+        const mo = String(now.getMonth() + 1).padStart(2, '0');
+        const y = now.getFullYear();
+        $('#timeDisplay').textContent = `${h}:${m} ${d}.${mo}.${y}`;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    // Навигация
+    const desktop = $('#desktop');
+    const cipherApp = $('#cipherApp');
+    const ballisticApp = $('#ballisticApp');
+    const scannerApp = $('#scannerApp');
+    const timerApp = $('#timerApp');
+    const mapApp = $('#mapApp');
+    let currentApp = null;
+
+    function showApp(app) {
+        if (currentApp) currentApp.classList.remove('active');
+        app.classList.add('active');
+        currentApp = app;
+        desktop.style.display = 'none';
+    }
+    function hideApp() {
+        if (currentApp) currentApp.classList.remove('active');
+        currentApp = null;
+        desktop.style.display = 'flex';
+        if (typeof scannerInterval !== 'undefined' && scannerInterval) {
+            clearInterval(scannerInterval);
+            scannerInterval = null;
+        }
+        if (typeof scannerNoise !== 'undefined' && scannerNoise) {
+            scannerNoise.disconnect();
+            scannerNoise = null;
+        }
+    }
+
+    // ---------- Шифратор ----------
+    const inputAlphabet = [
+        'а','б','в','г','д','е','ж','з','и','й','к','л','м','н','о','п','р','с','т','у',
+        'ф','х','ц','ч','ш','щ','ъ','ы','ь','э','ю','я',' ','0','1','2','3','4','5','6','7','8','9'
+    ];
+    const MOD = 43;
+    function normalizeKey(k) { return k.toLowerCase().replace(/ё/g,'е').replace(/[^а-я0-9 ]/g,''); }
+    function toIndices(t) { return t.split('').map(c => inputAlphabet.indexOf(c)).filter(i => i !== -1); }
+    function encrypt(plain, key) {
+        const k = normalizeKey(key); if(!k) return [];
+        const ki = toIndices(k); if(!ki.length) return [];
+        const pi = toIndices(plain.toLowerCase().replace(/ё/g,'е')); if(!pi.length) return [];
+        return pi.map((p,i) => (p + ki[i % ki.length]) % MOD);
+    }
+    function decrypt(cipherIdx, key) {
+        const k = normalizeKey(key); if(!k) return [];
+        const ki = toIndices(k); if(!ki.length) return [];
+        return cipherIdx.map((c,i) => (c - ki[i % ki.length] + MOD) % MOD);
+    }
+    function formatOutput(idx) { return idx.map(i => i.toString().padStart(2,'0')).join(' '); }
+    function parseCipherInput(s) {
+        const clean = s.replace(/[^0-9]/g,'');
+        const res = [];
+        for(let i=0; i<clean.length; i+=2) {
+            const pair = clean.substring(i,i+2);
+            if(pair.length===2) { const n=parseInt(pair,10); if(n>=0&&n<MOD) res.push(n); }
+        }
+        return res;
+    }
+
+    let cipherMode = 'encrypt';
+    function renderCipherBody(mode) {
+        const isEnc = mode==='encrypt';
+        $('#cipherBody').innerHTML = `
+            <div class="field"><label>Ключ:</label><input type="text" id="cipherKey" placeholder="Введите ключ..."></div>
+            <div class="field"><label>${isEnc?'Сообщение (а-я,0-9,пробел):':'Шифротекст (числа):'}</label>
+                <textarea id="cipherMessage" placeholder="${isEnc?'Введите текст...':'Вставьте числа...'}"></textarea></div>
+            <div class="controls">
+                <button class="btn" id="executeCipherBtn">${isEnc?'ЗАШИФРОВАТЬ':'РАСШИФРОВАТЬ'}</button>
+                <div class="led" id="cipherLed"></div>
+            </div>
+            <div class="field"><label>Результат:</label><textarea id="cipherOutput" class="output-field" readonly></textarea></div>
+        `;
+        $('#executeCipherBtn').addEventListener('click', ()=>{
+            const key = $('#cipherKey').value.trim();
+            const msg = $('#cipherMessage').value.trim();
+            const out = $('#cipherOutput');
+            const led = $('#cipherLed');
+            if(!key||!msg) { out.value='Заполните ключ и сообщение.'; return; }
+            if(isEnc) {
+                const enc = encrypt(msg, key);
+                out.value = enc.length ? formatOutput(enc) : 'Нет допустимых символов.';
+            } else {
+                const idx = parseCipherInput(msg);
+                if(!idx.length) { out.value='Не найдено чисел.'; return; }
+                const dec = decrypt(idx, key);
+                out.value = dec.length ? dec.map(i=>inputAlphabet[i]).join('') : 'Ошибка ключа.';
+            }
+            led.classList.add('active');
+            setTimeout(()=>led.classList.remove('active'), 400);
+        });
+    }
+
+    $('#appIconCipher').addEventListener('click', ()=>{ showApp(cipherApp); renderCipherBody(cipherMode); });
+    $('#closeCipherApp').addEventListener('click', hideApp);
+    $('#cipherTabs').addEventListener('click', (e)=>{
+        if(e.target.classList.contains('app-tab')) {
+            $$('#cipherTabs .app-tab').forEach(t=>t.classList.remove('active'));
+            e.target.classList.add('active');
+            cipherMode = e.target.dataset.mode;
+            renderCipherBody(cipherMode);
+        }
+    });
+
+    // ---------- Баллистический калькулятор ----------
+    let ballisticParams = { caliber:120, mass:16.2, v0:302, i:1.0, angle:45, targetDistance:3000, mode:'angle', windX:0, windZ:0, muzzleHeight:1.5 };
+    let trajectoryData = [];
+
+    function rho(y) {
+        const L=0.0065, T0=288.15, p0=1.225, g=9.80665, M=0.0289644, R=8.31432;
+        if(y>11000) return 0;
+        const T = T0 - L*y;
+        return p0 * Math.pow(1 - L*y/T0, (g*M)/(R*L) - 1);
+    }
+    function aSound(y) {
+        const T0=288.15, L=0.0065;
+        const T = Math.max(T0 - L*y, 216.65);
+        return 20.0468 * Math.sqrt(T);
+    }
+    const machTable=[], cdTable=[];
+    const rawData = [
+        [0.00,0.15],[0.05,0.15],[0.10,0.15],[0.15,0.15],[0.20,0.15],[0.25,0.15],[0.30,0.16],[0.35,0.17],[0.40,0.19],[0.45,0.21],
+        [0.50,0.24],[0.55,0.28],[0.60,0.33],[0.65,0.39],[0.70,0.46],[0.75,0.54],[0.80,0.62],[0.85,0.70],[0.90,0.78],[0.95,0.85],
+        [1.00,0.92],[1.05,0.96],[1.10,0.98],[1.15,0.99],[1.20,0.98],[1.25,0.96],[1.30,0.93],[1.35,0.90],[1.40,0.86],[1.45,0.83],
+        [1.50,0.79],[1.55,0.76],[1.60,0.72],[1.65,0.69],[1.70,0.66],[1.75,0.63],[1.80,0.60],[1.85,0.57],[1.90,0.54],[1.95,0.52],
+        [2.00,0.49],[2.05,0.47],[2.10,0.44],[2.15,0.42],[2.20,0.40],[2.25,0.38],[2.30,0.36],[2.35,0.34],[2.40,0.32],[2.45,0.31],
+        [2.50,0.29]
+    ];
+    rawData.forEach(([m,cd])=>{ machTable.push(m); cdTable.push(cd); });
+    function getCd(M) {
+        if(M<=machTable[0]) return cdTable[0];
+        if(M>=machTable[machTable.length-1]) return cdTable[cdTable.length-1];
+        let i=0;
+        while(machTable[i]<=M) i++;
+        const t = (M - machTable[i-1])/(machTable[i] - machTable[i-1]);
+        return cdTable[i-1] + t*(cdTable[i] - cdTable[i-1]);
+    }
+
+    function simulate(params) {
+        const { caliber, mass, v0, angle, windX, windZ, muzzleHeight, i:iFactor } = params;
+        const S = Math.PI * Math.pow(caliber/1000,2)/4;
+        const g=9.80665, dt=0.01;
+        let x=0, y=muzzleHeight, z=0;
+        let Vx = v0 * Math.cos(angle * Math.PI/180);
+        let Vy = v0 * Math.sin(angle * Math.PI/180);
+        let Vz=0, t=0;
+        const points = [{x,y,z}];
+        function derivatives(x,y,z,Vx,Vy,Vz) {
+            const VrelX = Vx - windX, VrelY = Vy, VrelZ = Vz - windZ;
+            const Vrel = Math.sqrt(VrelX*VrelX + VrelY*VrelY + VrelZ*VrelZ);
+            const M = Vrel / aSound(y);
+            const Cd = getCd(M);
+            const k = 0.5 * rho(y) * S * Cd / mass * iFactor;
+            return {
+                dVx: -k * VrelX * Vrel,
+                dVy: -g - k * VrelY * Vrel,
+                dVz: -k * VrelZ * Vrel
+            };
+        }
+        for(let step=0; step<200000; step++) {
+            if(y<0) break;
+            const k1v = derivatives(x,y,z,Vx,Vy,Vz);
+            const k1x=Vx, k1y=Vy, k1z=Vz;
+            const k2v = derivatives(x+0.5*dt*k1x, y+0.5*dt*k1y, z+0.5*dt*k1z, Vx+0.5*dt*k1v.dVx, Vy+0.5*dt*k1v.dVy, Vz+0.5*dt*k1v.dVz);
+            const k2x=Vx+0.5*dt*k1v.dVx, k2y=Vy+0.5*dt*k1v.dVy, k2z=Vz+0.5*dt*k1v.dVz;
+            const k3v = derivatives(x+0.5*dt*k2x, y+0.5*dt*k2y, z+0.5*dt*k2z, Vx+0.5*dt*k2v.dVx, Vy+0.5*dt*k2v.dVy, Vz+0.5*dt*k2v.dVz);
+            const k3x=Vx+0.5*dt*k2v.dVx, k3y=Vy+0.5*dt*k2v.dVy, k3z=Vz+0.5*dt*k2v.dVz;
+            const k4v = derivatives(x+dt*k3x, y+dt*k3y, z+dt*k3z, Vx+dt*k3v.dVx, Vy+dt*k3v.dVy, Vz+dt*k3v.dVz);
+            const k4x=Vx+dt*k3v.dVx, k4y=Vy+dt*k3v.dVy, k4z=Vz+dt*k3v.dVz;
+
+            x += dt/6 * (k1x + 2*k2x + 2*k3x + k4x);
+            y += dt/6 * (k1y + 2*k2y + 2*k3y + k4y);
+            z += dt/6 * (k1z + 2*k2z + 2*k3z + k4z);
+            Vx += dt/6 * (k1v.dVx + 2*k2v.dVx + 2*k3v.dVx + k4v.dVx);
+            Vy += dt/6 * (k1v.dVy + 2*k2v.dVy + 2*k3v.dVy + k4v.dVy);
+            Vz += dt/6 * (k1v.dVz + 2*k2v.dVz + 2*k3v.dVz + k4v.dVz);
+            t += dt;
+            points.push({x,y,z});
+            if(y<0) {
+                const prev = points[points.length-2];
+                const frac = prev.y/(prev.y - y);
+                x = prev.x + frac*(x - prev.x);
+                y = 0;
+                z = prev.z + frac*(z - prev.z);
+                points[points.length-1] = {x,y,z};
+                break;
+            }
+        }
+        const maxH = Math.max(...points.map(p=>p.y));
+        return { points, range:x, maxHeight:maxH, time:t, drift:z };
+    }
+
+    function findAngle(params, targetRange) {
+        let a1=45, a2=85;
+        for(let iter=0; iter<30; iter++) {
+            const mid = (a1+a2)/2;
+            const res = simulate({...params, angle:mid});
+            if(res.range < targetRange) a2 = mid; else a1 = mid;
+        }
+        return (a1+a2)/2;
+    }
+
+    function drawTrajectory(points, canvasId) {
+        const canvas = document.getElementById(canvasId);
+        if(!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width = canvas.offsetWidth;
+        const h = canvas.height = canvas.offsetHeight;
+        ctx.clearRect(0,0,w,h);
+        if(!points.length) return;
+        const maxX = Math.max(...points.map(p=>p.x)) * 1.1;
+        const maxY = Math.max(...points.map(p=>p.y)) * 1.2;
+        const scaleX = (w-40)/maxX, scaleY = (h-40)/maxY;
+        ctx.strokeStyle='#59612D'; ctx.lineWidth=2; ctx.beginPath();
+        points.forEach((p,i)=>{
+            const sx=20+p.x*scaleX, sy=h-20-p.y*scaleY;
+            if(i===0) ctx.moveTo(sx,sy); else ctx.lineTo(sx,sy);
+        });
+        ctx.stroke();
+        const last = points[points.length-1];
+        const lx=20+last.x*scaleX, ly=h-20-last.y*scaleY;
+        ctx.fillStyle='#ff4444'; ctx.beginPath(); ctx.arc(lx,ly,4,0,2*Math.PI); ctx.fill();
+        ctx.strokeStyle='#333'; ctx.lineWidth=0.5;
+        for(let i=0; i<=maxX; i+=500) {
+            const sx=20+i*scaleX; ctx.beginPath(); ctx.moveTo(sx,20); ctx.lineTo(sx,h-20); ctx.stroke();
+        }
+        for(let j=0; j<=maxY; j+=500) {
+            const sy=h-20-j*scaleY; ctx.beginPath(); ctx.moveTo(20,sy); ctx.lineTo(w-20,sy); ctx.stroke();
+        }
+    }
+
+    const chargeDB = [
+        { caliber:60, mines:[{ name:'О-832', mass:1.5, i:0.9, charges:[
+            {label:'0',v0:70},{label:'1',v0:95},{label:'2',v0:125},{label:'3',v0:160},{label:'4(Д)',v0:190}
+        ]}]},
+        { caliber:82, mines:[{ name:'О-832', mass:3.1, i:0.95, charges:[
+            {label:'0',v0:70},{label:'1',v0:110},{label:'2',v0:155},{label:'3',v0:211},{label:'4(Д)',v0:270}
+        ]}]},
+        { caliber:120, mines:[{ name:'ОФ-843Б', mass:16.2, i:1.0, charges:[
+            {label:'0',v0:105},{label:'1',v0:130},{label:'2',v0:160},{label:'3',v0:195},{label:'4',v0:232},{label:'5',v0:272},{label:'6(Д)',v0:302}
+        ]}]}
+    ];
+
+    function renderBallisticCalc() {
+        const p = ballisticParams;
+        $('#ballisticBody').innerHTML = `
+            <div style="display:flex; gap:20px; flex-wrap:wrap;">
+                <div style="flex:1; min-width:200px;">
+                    <div class="field"><label>Калибр (мм)</label><input type="number" id="caliber" value="${p.caliber}" step="1" min="20" max="300"></div>
+                    <div class="field"><label>Масса мины (кг)</label><input type="number" id="mass" value="${p.mass}" step="0.1" min="0.1"></div>
+                    <div class="field"><label>Коэффициент формы i</label><input type="number" id="iFactor" value="${p.i}" step="0.01" min="0.5" max="2.0"></div>
+                    <div class="field"><label>Начальная скорость V₀ (м/с)</label><input type="number" id="v0" value="${p.v0}" step="1" min="10"></div>
+                </div>
+                <div style="flex:1; min-width:200px;">
+                    <div class="field"><label>Режим</label><select id="modeSelect">
+                        <option value="angle" ${p.mode==='angle'?'selected':''}>По углу</option>
+                        <option value="distance" ${p.mode==='distance'?'selected':''}>По дальности</option>
+                    </select></div>
+                    <div class="field" id="angleField"><label>Угол возвышения (град)</label><input type="number" id="angle" value="${p.angle}" step="0.1" min="1" max="89"></div>
+                    <div class="field" id="distField" style="display:${p.mode==='distance'?'flex':'none'}"><label>Целевая дальность (м)</label><input type="number" id="targetDist" value="${p.targetDistance}" step="1" min="100"></div>
+                    <div class="field"><label>Продольный ветер (м/с)</label><input type="number" id="windX" value="${p.windX}" step="0.1"></div>
+                    <div class="field"><label>Поперечный ветер (м/с)</label><input type="number" id="windZ" value="${p.windZ}" step="0.1"></div>
+                    <div class="field"><label>Высота дульного среза (м)</label><input type="number" id="muzzleH" value="${p.muzzleHeight}" step="0.1"></div>
+                </div>
+            </div>
+            <div class="controls"><button class="btn" id="calcBtn">РАССЧИТАТЬ</button></div>
+            <canvas id="trajCanvas" style="height:200px;"></canvas>
+            <div id="results" style="color:#ccc; font-size:14px;"></div>
+        `;
+        const updateMode = ()=>{
+            const mode = $('#modeSelect').value;
+            $('#angleField').style.display = mode==='angle'?'flex':'none';
+            $('#distField').style.display = mode==='distance'?'flex':'none';
+        };
+        $('#modeSelect').addEventListener('change', updateMode);
+        updateMode();
+
+        $('#calcBtn').addEventListener('click', ()=>{
+            const caliber = parseFloat($('#caliber').value);
+            const mass = parseFloat($('#mass').value);
+            const i = parseFloat($('#iFactor').value);
+            const v0 = parseFloat($('#v0').value);
+            const windX = parseFloat($('#windX').value);
+            const windZ = parseFloat($('#windZ').value);
+            const muzzleH = parseFloat($('#muzzleH').value);
+            const mode = $('#modeSelect').value;
+            let angle;
+            if(mode==='angle') {
+                angle = parseFloat($('#angle').value);
+            } else {
+                const targetDist = parseFloat($('#targetDist').value);
+                angle = findAngle({caliber,mass,v0,i,windX,windZ,muzzleHeight:muzzleH}, targetDist);
+                $('#angle').value = angle.toFixed(2);
+            }
+            const simParams = {caliber,mass,v0,angle,i,windX,windZ,muzzleHeight:muzzleH};
+            const result = simulate(simParams);
+            trajectoryData = result.points;
+            drawTrajectory(trajectoryData, 'trajCanvas');
+            $('#results').innerHTML = `
+                <p>Дальность: <b>${result.range.toFixed(1)} м</b></p>
+                <p>Макс. высота: <b>${result.maxHeight.toFixed(1)} м</b></p>
+                <p>Время полёта: <b>${result.time.toFixed(2)} с</b></p>
+                <p>Угол: <b>${angle.toFixed(2)}°</b></p>
+                <p>Боковое отклонение: <b>${result.drift.toFixed(1)} м</b></p>
+            `;
+        });
+    }
+
+    function renderBallisticRef() {
+        let html = '<div class="table-wrapper">';
+        chargeDB.forEach(cal => {
+            html += `<div class="caliber-header">Калибр ${cal.caliber} мм</div><table><thead><tr><th>Мина</th><th>Масса (кг)</th><th>i</th><th>Заряд</th><th>V₀ (м/с)</th></tr></thead><tbody>`;
+            cal.mines.forEach(mine => {
+                html += `<tr><td rowspan="${mine.charges.length}">${mine.name}</td><td rowspan="${mine.charges.length}">${mine.mass}</td><td rowspan="${mine.charges.length}">${mine.i}</td>`;
+                mine.charges.forEach((ch, idx) => {
+                    if(idx>0) html += '<tr>';
+                    html += `<td>№${ch.label}</td><td class="charge-v0" data-cal="${cal.caliber}" data-mass="${mine.mass}" data-i="${mine.i}" data-v0="${ch.v0}" style="cursor:pointer; color:var(--accent);">${ch.v0}</td></tr>`;
+                });
+            });
+            html += '</tbody></table><br>';
+        });
+        html += '</div>';
+        $('#ballisticBody').innerHTML = html;
+        $$('.charge-v0').forEach(cell => {
+            cell.addEventListener('click', function() {
+                ballisticParams.caliber = parseInt(this.dataset.cal);
+                ballisticParams.mass = parseFloat(this.dataset.mass);
+                ballisticParams.i = parseFloat(this.dataset.i);
+                ballisticParams.v0 = parseFloat(this.dataset.v0);
+                $$('#ballisticTabs .app-tab').forEach(t => t.classList.remove('active'));
+                document.querySelector('#ballisticTabs .app-tab[data-tab="calc"]').classList.add('active');
+                renderBallisticCalc();
+            });
+        });
+    }
+
+    $('#appIconBallistic').addEventListener('click', ()=>{ showApp(ballisticApp); renderBallisticCalc(); });
+    $('#closeBallisticApp').addEventListener('click', hideApp);
+    $('#ballisticTabs').addEventListener('click', (e)=>{
+        if(e.target.classList.contains('app-tab')) {
+            $$('#ballisticTabs .app-tab').forEach(t=>t.classList.remove('active'));
+            e.target.classList.add('active');
+            if(e.target.dataset.tab==='calc') renderBallisticCalc();
+            else renderBallisticRef();
+        }
+    });
+
+    // ---------- Сканер эфира ----------
+    const messages = [
+        "Внимание, восточный блокпост! Четверо рейдеров движутся к насосной...",
+        "Дым над хим.полигоном — новая дрянь расползлась.",
+        "Коготь, твой схрон выпотрошили.",
+        "У моста трое с АКСУ, прикидываются травниками.",
+        "Квадрат 17-33 чист, но следы крупного мутанта.",
+        "Общий сбор у Артема! Трое двухсотых.",
+        "Схрон под башней открыт: цинки патронов 7.62.",
+        "В подвале школы №5 что-то орало.",
+        "У восточного терминала грузовик с контейнерами.",
+        "Под плотиной взрывы — ищут довоенные склады."
+    ];
+    let scannerNoise = null, scannerInterval = null;
+
+    function startNoise() {
+        if(scannerNoise) return;
+        const ctx = new (window.AudioContext||window.webkitAudioContext)();
+        const node = ctx.createScriptProcessor(4096, 0, 1);
+        node.onaudioprocess = e => {
+            const out = e.outputBuffer.getChannelData(0);
+            for(let i=0;i<4096;i++) out[i] = Math.random()*0.1-0.05;
+        };
+        const filter = ctx.createBiquadFilter();
+        filter.type='bandpass'; filter.frequency.value=800; filter.Q.value=5;
+        node.connect(filter); filter.connect(ctx.destination);
+        scannerNoise = {ctx, node, filter};
+    }
+    function stopNoise() {
+        if(scannerNoise) { scannerNoise.node.disconnect(); scannerNoise.ctx.close(); scannerNoise=null; }
+    }
+
+    function renderScanner() {
+        const canvas = $('#scannerCanvas');
+        const ctx = canvas.getContext('2d');
+        let freq=4625.0, signal=0, scanAngle=0;
+        const meterFill = $('#meterFill'), meterValue = $('#meterValue');
+        const interceptOutput = $('#interceptOutput');
+
+        function draw() {
+            const w=canvas.width=canvas.offsetWidth, h=canvas.height=canvas.offsetHeight;
+            ctx.clearRect(0,0,w,h);
+            ctx.strokeStyle='#333'; ctx.lineWidth=1;
+            for(let x=0;x<w;x+=30) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+            for(let y=0;y<h;y+=20) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+            const cx = w/2 + Math.sin(scanAngle)*w/4;
+            ctx.strokeStyle='#0f0'; ctx.lineWidth=2;
+            ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,h); ctx.stroke();
+            const signalHeight = signal*h;
+            ctx.fillStyle='rgba(0,255,0,0.3)';
+            ctx.fillRect(cx-4, h-signalHeight, 8, signalHeight);
+        }
+        function scan() {
+            freq = 4600 + Math.random()*100;
+            signal = Math.random();
+            scanAngle += 0.2;
+            $('#freqDisplay').textContent = freq.toFixed(1)+' кГц';
+            meterFill.style.width = (signal*100)+'%';
+            meterValue.textContent = Math.floor(signal*100);
+            draw();
+            if(signal>0.7) {
+                interceptOutput.value = messages[Math.floor(Math.random()*messages.length)];
+            }
+        }
+        $('#scanBtn').addEventListener('click', scan);
+        $('#autoScanBtn').addEventListener('click', ()=>{
+            if(scannerInterval) {
+                clearInterval(scannerInterval); scannerInterval=null;
+                $('#autoScanBtn').textContent='АВТОСКАНИРОВАНИЕ';
+            } else {
+                scannerInterval = setInterval(scan, 2000);
+                $('#autoScanBtn').textContent='СТОП';
+            }
+        });
+        startNoise();
+        draw();
+        $('#closeScannerApp').addEventListener('click', ()=>{
+            if(scannerInterval) clearInterval(scannerInterval);
+            stopNoise();
+        });
+    }
+
+    $('#appIconScanner').addEventListener('click', ()=>{ showApp(scannerApp); renderScanner(); });
+    $('#closeScannerApp').addEventListener('click', hideApp);
+
+    // ---------- Тактический таймер ----------
+    let timerSeconds = 0, timerIntervalId = null, timerRunning = false, audioCtx = null;
+    function formatTime(sec) {
+        const m = Math.floor(sec/60), s = sec%60;
+        return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    }
+    function updateTimerDisplay() {
+        const disp = $('#timerDisplay'), rem = $('#timerRemaining');
+        if(disp) disp.textContent = formatTime(timerSeconds);
+        if(rem) rem.textContent = formatTime(timerSeconds);
+    }
+    function stopTimer() {
+        if(timerIntervalId) { clearInterval(timerIntervalId); timerIntervalId=null; }
+        timerRunning = false;
+    }
+    function startTimer() {
+        if(timerRunning || timerSeconds<=0) return;
+        stopTimer();
+        timerRunning = true;
+        timerIntervalId = setInterval(()=>{
+            if(timerSeconds>0) {
+                timerSeconds--;
+                updateTimerDisplay();
+                if(timerSeconds===0) {
+                    stopTimer();
+                    if(audioCtx) audioCtx.close();
+                    audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type='sawtooth'; osc.frequency.value=800;
+                    gain.gain.value=0.3; osc.connect(gain); gain.connect(audioCtx.destination);
+                    osc.start(); setTimeout(()=>{ osc.stop(); gain.disconnect(); }, 500);
+                    if(navigator.vibrate) navigator.vibrate([200,100,200,100,200]);
+                }
+            }
+        }, 1000);
+    }
+    function setupTimerControls() {
+        $('#timerAdd5').addEventListener('click', ()=>{ timerSeconds+=300; updateTimerDisplay(); });
+        $('#timerAdd1').addEventListener('click', ()=>{ timerSeconds+=60; updateTimerDisplay(); });
+        $('#timerStart').addEventListener('click', startTimer);
+        $('#timerStop').addEventListener('click', stopTimer);
+        $('#timerReset').addEventListener('click', ()=>{ stopTimer(); timerSeconds=0; updateTimerDisplay(); });
+        updateTimerDisplay();
+    }
+    setupTimerControls();
+    $('#appIconTimer').addEventListener('click', ()=>{ showApp(timerApp); updateTimerDisplay(); });
+    $('#closeTimerApp').addEventListener('click', hideApp);
+
+    // ---------- Карта сектора (улучшенная) ----------
+    const mapCanvas = $('#mapCanvas');
+    const mapContainer = $('#mapContainer');
+    const mapFileInput = $('#mapFileInput');
+    let mapImage = new Image();
+    let markers = [];
+    let currentMarkerType = 'cache';
+    let placingMarker = false; // режим установки маркеров
+    const STORAGE_KEY = 'order_map_v1';
+
+    // Переменные для зума и панорамирования
+    let scale = 1.0;
+    let offsetX = 0, offsetY = 0;
+    let isPanning = false;
+    let panStartX = 0, panStartY = 0;
+    let mouseDownPos = {x:0, y:0}; // для определения клика
+
+    const markerColors = {
+        cache: '#00ff00',
+        ambush: '#ff0000',
+        anomaly: '#ffff00',
+        camp: '#00bfff'
+    };
+
+    function loadMapData() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if(saved) {
+            try {
+                const data = JSON.parse(saved);
+                if(data.imageBase64) mapImage.src = data.imageBase64;
+                if(data.markers) markers = data.markers;
+            } catch(e){}
+        }
+    }
+
+    function saveMapData() {
+        const data = {
+            imageBase64: mapImage.src.length>0 && mapImage.src.startsWith('data:') ? mapImage.src : '',
+            markers: markers
+        };
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch(e) {
+            if(mapImage.src && mapImage.src.startsWith('data:')) {
+                const img = new Image();
+                img.onload = ()=>{
+                    const canvas = document.createElement('canvas');
+                    const maxDim = 2048;
+                    let width = img.width, height = img.height;
+                    if(width>height && width>maxDim) { height *= maxDim/width; width = maxDim; }
+                    else if(height>maxDim) { width *= maxDim/height; height = maxDim; }
+                    canvas.width = width; canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const compressed = canvas.toDataURL('image/jpeg', 0.7);
+                    data.imageBase64 = compressed;
+                    mapImage.src = compressed;
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                };
+                img.src = mapImage.src;
+            }
+        }
+    }
+
+    function drawMap() {
+        const canvas = mapCanvas;
+        const ctx = canvas.getContext('2d');
+        canvas.width = mapContainer.clientWidth;
+        canvas.height = mapContainer.clientHeight;
+
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.save();
+        ctx.translate(offsetX, offsetY);
+        ctx.scale(scale, scale);
+
+        if(mapImage.complete && mapImage.naturalWidth>0) {
+            ctx.drawImage(mapImage, 0, 0, mapImage.width, mapImage.height);
+        } else {
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#333'; ctx.lineWidth = 0.5;
+            const step = 50;
+            for(let x=0; x<canvas.width; x+=step) {
+                ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke();
+            }
+            for(let y=0; y<canvas.height; y+=step) {
+                ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y); ctx.stroke();
+            }
+        }
+
+        markers.forEach(m => {
+            const x = m.x * mapImage.width;
+            const y = m.y * mapImage.height;
+            const color = markerColors[m.type] || '#fff';
+            ctx.fillStyle = color;
+            ctx.strokeStyle = '#000'; ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(x, y, 8/scale, 0, 2*Math.PI);
+            ctx.fill();
+            ctx.stroke();
+        });
+        ctx.restore();
+    }
+
+    // Обработчики для карты
+    mapCanvas.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const zoomIntensity = 0.1;
+        const delta = e.deltaY > 0 ? -zoomIntensity : zoomIntensity;
+        const newScale = Math.min(5, Math.max(0.2, scale + delta));
+        const rect = mapCanvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        const scaleChange = newScale/scale;
+        offsetX = mouseX - scaleChange*(mouseX - offsetX);
+        offsetY = mouseY - scaleChange*(mouseY - offsetY);
+        scale = newScale;
+        drawMap();
+    });
+
+    mapCanvas.addEventListener('mousedown', (e) => {
+        if(e.button === 0) { // левая кнопка
+            isPanning = true;
+            panStartX = e.clientX;
+            panStartY = e.clientY;
+            mouseDownPos = {x: e.clientX, y: e.clientY};
+            mapCanvas.style.cursor = 'grabbing';
+            e.preventDefault();
+        }
+    });
+
+    window.addEventListener('mouseup', (e) => {
+        if(isPanning) {
+            isPanning = false;
+            mapCanvas.style.cursor = placingMarker ? 'crosshair' : 'default';
+            // Проверяем, был ли клик (смещение < 3 пикселей)
+            const dx = e.clientX - mouseDownPos.x;
+            const dy = e.clientY - mouseDownPos.y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if(dist < 3 && placingMarker && mapImage.complete && mapImage.naturalWidth>0) {
+                // Ставим маркер
+                const rect = mapCanvas.getBoundingClientRect();
+                const canvasX = (e.clientX - rect.left - offsetX)/scale;
+                const canvasY = (e.clientY - rect.top - offsetY)/scale;
+                const normX = canvasX / mapImage.width;
+                const normY = canvasY / mapImage.height;
+                if(normX>=0 && normX<=1 && normY>=0 && normY<=1) {
+                    markers.push({x:normX, y:normY, type: currentMarkerType});
+                    saveMapData();
+                    drawMap();
+                }
+            }
+        }
+    });
+
+    mapCanvas.addEventListener('mousemove', (e) => {
+        if(isPanning) {
+            const dx = e.clientX - panStartX;
+            const dy = e.clientY - panStartY;
+            offsetX += dx;
+            offsetY += dy;
+            panStartX = e.clientX;
+            panStartY = e.clientY;
+            drawMap();
+        }
+    });
+
+    // Правый клик - удаление маркера
+    mapCanvas.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        const rect = mapCanvas.getBoundingClientRect();
+        const canvasX = (e.clientX - rect.left - offsetX)/scale;
+        const canvasY = (e.clientY - rect.top - offsetY)/scale;
+        if(mapImage.complete && mapImage.naturalWidth>0) {
+            const normX = canvasX / mapImage.width;
+            const normY = canvasY / mapImage.height;
+            let minDist = 0.03;
+            let index = -1;
+            markers.forEach((m,i)=>{
+                const dx = m.x - normX, dy = m.y - normY;
+                const dist = Math.sqrt(dx*dx+dy*dy);
+                if(dist<minDist) { minDist=dist; index=i; }
+            });
+            if(index!==-1) {
+                markers.splice(index,1);
+                saveMapData();
+                drawMap();
+            }
+        }
+    });
+
+    // Кнопка МАРКЕР
+    const toggleMarkerBtn = $('#toggleMarkerBtn');
+    toggleMarkerBtn.addEventListener('click', () => {
+        placingMarker = !placingMarker;
+        if(placingMarker) {
+            toggleMarkerBtn.textContent = 'МАРКЕР: ВКЛ';
+            toggleMarkerBtn.style.background = '#4a5425';
+            mapCanvas.style.cursor = 'crosshair';
+        } else {
+            toggleMarkerBtn.textContent = 'МАРКЕР';
+            toggleMarkerBtn.style.background = '';
+            mapCanvas.style.cursor = 'default';
+        }
+    });
+
+    $('#loadMapBtn').addEventListener('click', ()=> mapFileInput.click());
+    mapFileInput.addEventListener('change', (e)=>{
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev)=>{
+            mapImage.src = ev.target.result;
+            mapImage.onload = ()=>{
+                const maxDim = 2048;
+                if(mapImage.width>maxDim || mapImage.height>maxDim) {
+                    const canvas = document.createElement('canvas');
+                    let w = mapImage.width, h = mapImage.height;
+                    if(w>h && w>maxDim) { h *= maxDim/w; w = maxDim; }
+                    else if(h>maxDim) { w *= maxDim/h; h = maxDim; }
+                    canvas.width = w; canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(mapImage, 0, 0, w, h);
+                    mapImage.src = canvas.toDataURL('image/jpeg', 0.8);
+                }
+                scale = 1; offsetX = 0; offsetY = 0;
+                saveMapData();
+                drawMap();
+            };
+        };
+        reader.readAsDataURL(file);
+    });
+
+    $('#markerType').addEventListener('change', (e)=>{ currentMarkerType = e.target.value; });
+    $('#clearMarkersBtn').addEventListener('click', ()=>{ markers=[]; saveMapData(); drawMap(); });
+
+    $('#appIconMap').addEventListener('click', ()=>{ showApp(mapApp); drawMap(); });
+    $('#closeMapApp').addEventListener('click', hideApp);
+
+    // Кнопки управления планшетом
+    $('#btnHome').addEventListener('click', hideApp);
+    $('#btnBack').addEventListener('click', hideApp);
+
+    // Инициализация карты и запуск
+    loadMapData();
+    hideApp();
+})();
+</script>
+</body>
+</html>
